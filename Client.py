@@ -15,6 +15,7 @@ def connect_to_server():
     return server, port
 
 
+
 def message_from_server(s):
     return s.recv(2048).decode()
 

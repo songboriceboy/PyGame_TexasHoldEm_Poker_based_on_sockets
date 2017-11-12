@@ -32,8 +32,8 @@ class Card:
         elif self._suit == "SPADES":
             icon = "of SPADES"
         else:
-            pass  # RAISE EXCEPTION HERE
-        return (self._number + " " + icon)
+            pass
+        return self._number + " " + icon
 
     def __lt__(self, other):
         if self._number != other._number:
@@ -48,7 +48,7 @@ class Card:
             return self._suitRanking > other._suitRanking
 
     def __eq__(self, other):
-        return (self._number == other._number and self._suit == other._suit)
+        return self._number == other._number and self._suit == other._suit
 
     def __hash__(self):
         return hash((self._number, self._ranking, self._suit, self._suitRanking))
@@ -65,7 +65,7 @@ class Deck:
                 self._deck.append(Card(Deck.numberRange[numberIndex], Deck.suitRange[suitIndex]))
         self._count = 0
 
-    def shuffle(self):  # Implementation of the inside-out version of the Fisher-Yates algorithm
+    def shuffle(self):
         temp = self._deck[:]
         for cardIndex in range(len(self._deck)):
             random = randint(0, cardIndex)
@@ -74,15 +74,15 @@ class Deck:
             temp[random] = self._deck[cardIndex]
         self._deck = temp[:]
 
-    def draw(self):  # Draws a card from the deck and returns it
+    def draw(self):
         cardDrawn = self._deck[self._count]
         self._count += 1
         return cardDrawn
 
-    def discard(self):  # Skips over a card in the deck as if it was discarded
+    def discard(self):
         self._count += 1
 
-    def reset(self):  # Shuffles the deck again and resets the count
+    def reset(self):
         Deck.shuffle(self)
         self._count = 0
 
@@ -91,7 +91,7 @@ class River:
     def __init__(self):
         self._river = []
 
-    def step(self, stepNum, Deck):  # depending on the step of the river, draws n cards to the river
+    def step(self, stepNum, Deck):
         if stepNum == 1:
             for i in range(3):
                 self._river.append(Deck.draw())
@@ -99,15 +99,15 @@ class River:
             Deck.discard()
             self._river.append(Deck.draw())
         else:
-            pass  # Raise stepNum Exception
+            pass
 
-    def showRiver(self):  # displays the river
+    def showRiver(self):
         print("RIVER")
         for i in range(len(self._river)):
             print(str(i + 1) + ". "),
             print(self._river[i])
 
-    def getRiver(self):  # returns the river
+    def getRiver(self):
         return self._river
 
 
@@ -119,23 +119,17 @@ class Hand:
         self._hand = []
         self._High = []
 
-    def dealHand(self, nCards, Deck):  # Deals ncards from Deck to the hand
+    def dealHand(self, nCards, Deck):
         for i in range(nCards):
             self._hand.append(Deck.draw())
 
-    def showHand(self):  # displays the hand
-        print("Have your opponent face away from the screen and press enter when ready to see your hand.")
-        if raw_input() == "":
-            for i in range(len(self._hand)):
-                print(self._hand[i])
-
-    def getHand(self):  # returns the hand
+    def getHand(self):
         return self._hand
 
-    def getHigh(self):  # returns the highest card in the player's hand
+    def getHigh(self):
         return self._High
 
-    def evaluate(self, riverCards):  # evaluates what combinations the player has achieved with his hand and the river
+    def evaluate(self, riverCards):
         fullHand = self._hand + riverCards
         fullHand.sort(reverse=True)
         self._High.append(fullHand[0])
@@ -173,7 +167,7 @@ class Hand:
             else:
                 return self._High, Hand.Rankings["SINGLE"]
 
-    def checkStraight(self, CardList):  # checks if hand has a straight in it
+    def checkStraight(self, CardList):
         start, end = 0, 5
         while end <= len(CardList):
             fail = False
@@ -192,7 +186,7 @@ class Hand:
             else:
                 return (temp)
 
-    def checkFlush(self, CardList):  # checks if hand has a flush in it
+    def checkFlush(self, CardList):
         nSuit = {"DIAMONDS": 0, "CLUBS": 0, "HEARTS": 0, "SPADES": 0}
         for i in range(len(CardList)):
             suit = CardList[i].getSuit()
@@ -208,12 +202,12 @@ class Hand:
                     count += 1
                 return flushHand
 
-    def checkRoyal(self, StraightCombo, FlushCombo):  # checks if hand has a royal in it
+    def checkRoyal(self, StraightCombo, FlushCombo):
         if StraightCombo != FlushCombo or StraightCombo[0].getRanking() != 14:
             return False
         return True
 
-    def checkFreq(self, CardList):  # checks if frequency of card number in player's hand
+    def checkFreq(self, CardList):
         cards, freq = [], []
         for i in range(len(CardList)):
             if CardList[i].getNumber() not in cards:
@@ -223,7 +217,7 @@ class Hand:
                 freq[len(freq) - 1] += 1
         return cards, freq
 
-    def checkFour(self, CardList, cards, freq):  # checks if hand has a four of a kind
+    def checkFour(self, CardList, cards, freq):
         if 4 in freq:
             combo = []
             wantedCardNumber = cards[freq.index(4)]
@@ -232,7 +226,7 @@ class Hand:
                     combo.append(c)
             return combo
 
-    def checkThree(self, CardList, cards, freq):  # checks if hand has a three of a kind
+    def checkThree(self, CardList, cards, freq):
         if 3 in freq:
             combo = []
             wantedCardNumber = cards[freq.index(3)]
@@ -241,7 +235,7 @@ class Hand:
                     combo.append(c)
             return combo
 
-    def checkPair(self, CardList, cards, freq):  # checks if hand has a pair
+    def checkPair(self, CardList, cards, freq):
         if 2 in freq:
             combo = []
             wantedCardNumber = cards[freq.index(2)]
@@ -250,7 +244,7 @@ class Hand:
                     combo.append(c)
             return combo
 
-    def getAllPairs(self, CardList, cards, freq):  # checks for at most 2 pairs in hand
+    def getAllPairs(self, CardList, cards, freq):
         pairs = []
         for i in range(len(freq)):
             if freq[i] == 2:
@@ -272,17 +266,17 @@ class ChipPile():
         self._chipPile = ChipPile.STARTING
         self._BigBlind = False
 
-    def getChipPile(self):  # returns the player's chip pile
+    def getChipPile(self):
         return (self._chipPile)
 
-    def addToChipPile(self, nChips):  # adds nChips to to player's chip pile
+    def addToChipPile(self, nChips):
         self._chipPile += nChips
 
-    def setBlinds(self, alternate):  # setBlinds depending on alternate boolean True/False for 2 players
+    def setBlinds(self, alternate):
         if alternate:
             self._BigBlind = True
 
-    def betBlinds(self, Pot):  # bet blinds to the pot
+    def betBlinds(self, Pot):
         if self._BigBlind:
             Pot.addToPot(PokerPlayer.BIG_BLIND)
             self._chipPile -= PokerPlayer.BIG_BLIND
@@ -292,7 +286,7 @@ class ChipPile():
         if self._chipPile < 0:
             self._chipPile = 0
 
-    def getBigBlind(self):  # returns big blind status
+    def getBigBlind(self):
         return self._BigBlind
 
 
@@ -308,26 +302,26 @@ class PokerPlayer(Hand, ChipPile):
         prompt = self._name + ", " + str(self._chipPile) + " chips"
         return prompt
 
-    def getName(self):  # gets name of poker player
+    def getName(self):
         return self._name
 
-    def getWinStatus(self):  # returns win status of poker player
+    def getWinStatus(self):
         return self._isWinner
 
-    def isAllIn(self):  # returns all in status of poker player
+    def isAllIn(self):
         return self._AllIn
 
-    def setAsWinner(self):  # sets poker player as winner of pot
+    def setAsWinner(self):
         self._isWinner = True
 
-    def resetAll(self):  # resets attributes for the next round
+    def resetAll(self):
         self._AllIn = False
         self._BigBlind = False
         self._hand = []
         self._High = []
         self._isWinner = False
 
-    def bet(self, multiplyPotBy, pokerPot):  # handles player's option for betting
+    def bet(self, multiplyPotBy, pokerPot):
         oldPot = pokerPot.getPot()
         newPot = int(oldPot) + int(oldPot) * int(multiplyPotBy)
         self._chipPile -= (newPot - oldPot)
@@ -339,7 +333,7 @@ class PokerPlayer(Hand, ChipPile):
             pokerPot.setPot(newPot)
             print(self.getName() + " bets " + str(newPot - oldPot) + "!")
 
-    def call(self, pokerPot):  # handles player's option for calling
+    def call(self, pokerPot):
         oldPot = pokerPot.getPot()
         callBet = pokerPot.getCallBet()
         self._chipPile -= callBet
@@ -351,11 +345,11 @@ class PokerPlayer(Hand, ChipPile):
             self._chipPile += callBet
             PokerPlayer.allIn(self, pokerPot)
 
-    def check(self, pokerPot):  # handles player's option for calling a call or checking
+    def check(self, pokerPot):
         pokerPot.resetCallBet()
         print(self.getName() + " checks!")
 
-    def allIn(self, pokerPot, other=None):  # handles player's option for going all in
+    def allIn(self, pokerPot, other=None):
         self._AllIn = True
         if other == None or self._chipPile < other.getChipPile():
             oldPot = pokerPot.getPot()
@@ -382,37 +376,40 @@ class Pot:
         prompt = "Pot at " + str(self._pot)
         return prompt
 
-    def getPot(self):  # returns the pot
+    def getPot(self):
         return self._pot
 
-    def getCallBet(self):  # returns amount needed to call a bet
+    def getCallBet(self):
         return self._callBet
 
-    def setCallBet(self, nChips):  # sets amount needed to call a bet
+    def setCallBet(self, nChips):
         self._callBet = nChips
 
-    def resetCallBet(self):  # resets amount needed to call a bet
+    def resetCallBet(self):
         self._callBet = 0
 
-    def setPot(self, new):  # sets the Pot to a new amount
+    def setPot(self, new):
         self._pot = new
 
-    def addToPot(self, nChips):  # adds nchips to pot
+    def addToPot(self, nChips):
         self._pot += nChips
 
-    def awardPot(self, whoWon):  # awards pot to whoWon
+    def awardPot(self, whoWon):
         whoWon.addToChipPile(self._pot)
         self._pot = 0
         self._callBet = 0
 
-    def splitPot(self, p1, p2):  # splits pot between player1 and player2
+    def splitPot(self, p1, p2):
         p1.addToChipPile(self._pot // 2)
         p2.addToChipPile(self._pot // 2)
         self._pot = 0
         self._callBet = 0
 
-    def whoIsBigBlind(self, p1, p2):  # returns player who is the big blind
+    def whoIsBigBlind(self, p1, p2):
         if p1.getBigBlind():
             return p1
         else:
             return p2
+
+    def __str__(self):
+        return str(self._pot)
