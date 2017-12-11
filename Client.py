@@ -1,7 +1,5 @@
 import socket
 
-import jsonpickle
-
 PORTS = [8000, 8001]
 
 
@@ -15,20 +13,17 @@ def connect_to_server():
     return server, port
 
 
-
 def message_from_server(s):
     return s.recv(2048).decode()
 
 
 def answer_to_server(msg_string, server):
-    msg_string += ' '  # make sure something goes across
+    msg_string += ' '
     server.send(msg_string.encode())
 
 
-def process_server_message(msg, server, port):
-    if msg[0] == '{':
-        table = jsonpickle.decode(msg)
-    elif '?' in msg:
+def process_server_message(msg, server):
+    if '?' in msg:
         answer = input(msg)
         answer_to_server(answer, server)
     else:
@@ -36,12 +31,12 @@ def process_server_message(msg, server, port):
 
 
 def main():
-    skt, port = connect_to_server()
+    ser, port = connect_to_server()
 
     while True:
-        message = message_from_server(skt)
+        message = message_from_server(ser)
         if len(message) > 0:
-            process_server_message(message, skt, port)
+            process_server_message(message, ser)
 
 
 if __name__ == '__main__':
